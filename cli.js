@@ -278,6 +278,30 @@ cmd
   })
 
 /**
+  * Get Ambient Light IR Level
+  *
+  * @param {string} Device - Name of device
+  * @return {string} - Most recent ambient light IR level and the timestamp
+  */
+cmd
+  .command('lightir [device]')
+  .alias('ambientir')
+  .description('Gets the average ambient light IR level from a Point (defaults to the first Point found)')
+  .action(function (device, opts) {
+    checkAuth()
+
+    let point = getDevice(device)
+    console.log('Point: ' + chalk.green(point.name))
+
+    req.get(`/devices/${point.id}/part_als_ir`)
+      .then(function (res) {
+        let newest = _.last(res.data.values)
+        console.log('Avg light IR: ' + chalk.green(newest.value))
+        console.log('Time: ' + chalk.green(formatDate(newest.datetime)))
+      })
+  })
+
+/**
   * Get the timeline
   *
   * @param {string} event - Number of events you wish to retrieve
