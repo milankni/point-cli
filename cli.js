@@ -254,6 +254,30 @@ cmd
   })
 
 /**
+  * Get Ambient Light Level
+  *
+  * @param {string} Device - Name of device
+  * @return {string} - Most recent ambient light level and the timestamp
+  */
+cmd
+  .command('light [device]')
+  .alias('ambient')
+  .description('Gets the average ambient light level from a Point (defaults to the first Point found)')
+  .action(function (device, opts) {
+    checkAuth()
+
+    let point = getDevice(device)
+    console.log('Point: ' + chalk.green(point.name))
+
+    req.get(`/devices/${point.id}/part_als`)
+      .then(function (res) {
+        let newest = _.last(res.data.values)
+        console.log('Avg light: ' + chalk.green(newest.value))
+        console.log('Time: ' + chalk.green(formatDate(newest.datetime)))
+      })
+  })
+
+/**
   * Get the timeline
   *
   * @param {string} event - Number of events you wish to retrieve
