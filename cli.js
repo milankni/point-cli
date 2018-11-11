@@ -171,12 +171,12 @@ cmd
     req.get('/devices')
       .then(function (res) {
         for (var device of res.data.devices) {
-          console.log('Name: ' + chalk.blue(device.description))
-          console.log('ID: ' + chalk.blue(device.device_id))
+          console.log('Name: ' + chalk.green(device.description))
+          console.log('ID: ' + chalk.green(device.device_id))
           if (opts.verbose) {
-            console.log('Online: ' + chalk.blue(!device.offline ? '✔' : '✗'))
-            console.log('Active: ' + chalk.blue(device.active ? '✔' : '✗'))
-            console.log('Last seen: ' + chalk.blue(formatDate(device.last_heard_from_at)))
+            console.log('Online: ' + chalk.green(!device.offline ? '✔' : '✗'))
+            console.log('Active: ' + chalk.green(device.active ? '✔' : '✗'))
+            console.log('Last seen: ' + chalk.green(formatDate(device.last_heard_from_at)))
           }
           if (res.data.devices > 1) { console.log('\n') }
         }
@@ -196,13 +196,13 @@ cmd
     checkAuth()
 
     let point = getDevice(device)
-    console.log('Point: ' + chalk.blue(point.name))
+    console.log('Point: ' + chalk.green(point.name))
 
     req.get(`/devices/${point.id}/temperature`)
       .then(function (res) {
         let newest = _.last(res.data.values)
-        console.log('Temp: ' + chalk.blue(`${_.round(newest.value, 2)}°C`))
-        console.log('Time: ' + chalk.blue(formatDate(newest.datetime)))
+        console.log('Temp: ' + chalk.green(`${_.round(newest.value, 2)}°C`))
+        console.log('Time: ' + chalk.green(formatDate(newest.datetime)))
       })
   })
 
@@ -219,13 +219,13 @@ cmd
     checkAuth()
 
     let point = getDevice(device)
-    console.log('Point: ' + chalk.blue(point.name))
+    console.log('Point: ' + chalk.green(point.name))
 
     req.get(`/devices/${point.id}/humidity`)
       .then(function (res) {
         let newest = _.last(res.data.values)
-        console.log('Humidity: ' + chalk.blue(`${newest.value}%`))
-        console.log('Time: ' + chalk.blue(formatDate(newest.datetime)))
+        console.log('Humidity: ' + chalk.green(`${newest.value}%`))
+        console.log('Time: ' + chalk.green(formatDate(newest.datetime)))
       })
   })
 
@@ -243,13 +243,13 @@ cmd
     checkAuth()
 
     let point = getDevice(device)
-    console.log('Point: ' + chalk.blue(point.name))
+    console.log('Point: ' + chalk.green(point.name))
 
     req.get(`/devices/${point.id}/sound_avg_levels`)
       .then(function (res) {
         let newest = _.last(res.data.values)
-        console.log('Avg sound: ' + chalk.blue(newest.value))
-        console.log('Time: ' + chalk.blue(formatDate(newest.datetime)))
+        console.log('Avg sound: ' + chalk.green(newest.value))
+        console.log('Time: ' + chalk.green(formatDate(newest.datetime)))
       })
   })
 
@@ -280,8 +280,8 @@ cmd
         console.log(chalk.green('→ Past'))
         for (var event of newTimeline) {
           console.log(chalk.green('↓'))
-          console.log('Date: ' + chalk.blue(formatDate(event.datetime)))
-          console.log('Event: ' + chalk.blue(timelinePrettier(event.type)))
+          console.log('Date: ' + chalk.green(formatDate(event.datetime)))
+          console.log('Event: ' + chalk.green(timelinePrettier(event.type)))
         }
         console.log(chalk.green('→ Present'))
       })
