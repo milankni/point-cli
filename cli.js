@@ -302,6 +302,29 @@ cmd
   })
 
 /**
+  * Get Barometric Pressure Level
+  *
+  * @param {string} Device - Name of device
+  * @return {string} - Most recent barometric pressure and the timestamp
+  */
+cmd
+  .command('pressure [device]')
+  .description('Gets the average barometric pressure from a Point (defaults to the first Point found)')
+  .action(function (device, opts) {
+    checkAuth()
+
+    let point = getDevice(device)
+    console.log('Point: ' + chalk.green(point.name))
+
+    req.get(`/devices/${point.id}/pressure`)
+      .then(function (res) {
+        let newest = _.last(res.data.values)
+        console.log('Avg pressure: ' + chalk.green(newest.value))
+        console.log('Time: ' + chalk.green(formatDate(newest.datetime)))
+      })
+  })
+
+/**
   * Get the timeline
   *
   * @param {string} event - Number of events you wish to retrieve
