@@ -259,6 +259,8 @@ cmd
   * @param {string} event - Number of events you wish to retrieve
   * @return {string} - All the recorded events from your points timeline
   */
+/**
+  * timeline not supported by API anymore, disable temporarily
 cmd
   .command('timeline')
   .description('Retrieve your homes timeline (defaults to 10 events)')
@@ -286,6 +288,6 @@ cmd
         console.log(chalk.green('→ Present'))
       })
   })
-
+*/
 // Kick stuff off
 cmd.parse(process.argv)
