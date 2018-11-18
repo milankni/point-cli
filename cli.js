@@ -330,35 +330,40 @@ cmd
   * @param {string} event - Number of events you wish to retrieve
   * @return {string} - All the recorded events from your points timeline
   */
-/**
-  * timeline not supported by API anymore, disable temporarily
 cmd
   .command('timeline')
   .description('Retrieve your homes timeline (defaults to 10 events)')
-  .option('-e, --events', 'Specify how many events you would like to retrieve')
-  .action(function (args, opts) {
+  .option('-l, --limit [number]', 'Specify how many events you would like to retrieve')
+  .action(function (opts) {
     checkAuth()
 
     var config = {
       params: {
-        limit: 200
+        order: 'desc',
+        //start_at: '2017-12-20 00:00:00',
+        //end_at: '2018-12-20 00:00:00',
+        limit: (opts.limit) ? opts.limit:10
       }
     }
-    req.get('/timelines/me', config)
+
+    req.get('/events', config)
       .then(function (res) {
         let timeline = res.data.events
-        let newTimelineLength = args.options.events || 10
-        let newTimeline = timeline.slice(-newTimelineLength)
-
-        console.log(chalk.green('→ Past'))
-        for (var event of newTimeline) {
-          console.log(chalk.green('↓'))
-          console.log('Date: ' + chalk.green(formatDate(event.datetime)))
-          console.log('Event: ' + chalk.green(timelinePrettier(event.type)))
-        }
         console.log(chalk.green('→ Present'))
+        for (var event of timeline) {
+          console.log(chalk.green('↓'))
+          console.log('Date:   ' + chalk.green(formatDate(event.created_at)))
+          let text_params = event.text_params.slice(0,1)
+          for (var param of text_params) {
+            console.log('Device: ' + chalk.green(param.value))
+          }
+
+          console.log('Event:  ' + chalk.green(timelinePrettier(event.type)))
+
+        }
+        console.log(chalk.green('→ Past'))
       })
   })
-*/
+
 // Kick stuff off
 cmd.parse(process.argv)
