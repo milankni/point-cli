@@ -13,6 +13,7 @@ const dateFormat = require('dateformat')
 const co = require('co')
 const prompt = require('co-prompt')
 const _ = require('lodash')
+const util = require('util')
 
 /*
  * Constants
@@ -165,11 +166,14 @@ cmd
   .command('devices')
   .description('Gets all Points of user.')
   .option('-v, --verbose', 'Displays verbose details for devices')
+  .option('-d, --debug', 'Full response inspection')
   .action(function (opts) {
     checkAuth()
 
     req.get('/devices')
       .then(function (res) {
+        if (opts.debug) console.log(util.inspect(res, {showHidden: true, depth: null}))
+
         for (var device of res.data.devices) {
           console.log('Name: ' + chalk.green(device.description))
           console.log('ID: ' + chalk.green(device.device_id))
@@ -192,7 +196,8 @@ cmd
 cmd
   .command('temp [device]')
   .description('Gets the temperature (°C) of a Point (defaults to the first Point found)')
-  .action(function (device, options) {
+  .option('-d, --debug', 'Full response inspection')
+  .action(function (device, opts) {
     checkAuth()
 
     let point = getDevice(device)
@@ -200,6 +205,8 @@ cmd
 
     req.get(`/devices/${point.id}/temperature`)
       .then(function (res) {
+        if (opts.debug) console.log(util.inspect(res, {showHidden: true, depth: null}))
+
         let newest = _.last(res.data.values)
         console.log('Temp: ' + chalk.green(`${_.round(newest.value, 2)}°C`))
         console.log('Time: ' + chalk.green(formatDate(newest.datetime)))
@@ -215,6 +222,7 @@ cmd
 cmd
   .command('humidity [device]')
   .description('Gets the humidity (%) from a Point (defaults to the first Point found)')
+  .option('-d, --debug', 'Full response inspection')
   .action(function (device, opts) {
     checkAuth()
 
@@ -223,6 +231,8 @@ cmd
 
     req.get(`/devices/${point.id}/humidity`)
       .then(function (res) {
+        if (opts.debug) console.log(util.inspect(res, {showHidden: true, depth: null}))
+
         let newest = _.last(res.data.values)
         console.log('Humidity: ' + chalk.green(`${newest.value}%`))
         console.log('Time: ' + chalk.green(formatDate(newest.datetime)))
@@ -239,6 +249,7 @@ cmd
   .command('sound [device]')
   .alias('noise')
   .description('Gets the average sound level (db) from a Point (defaults to the first Point found)')
+  .option('-d, --debug', 'Full response inspection')
   .action(function (device, opts) {
     checkAuth()
 
@@ -247,6 +258,8 @@ cmd
 
     req.get(`/devices/${point.id}/sound_avg_levels`)
       .then(function (res) {
+        if (opts.debug) console.log(util.inspect(res, {showHidden: true, depth: null}))
+
         let newest = _.last(res.data.values)
         console.log('Avg sound: ' + chalk.green(newest.value))
         console.log('Time: ' + chalk.green(formatDate(newest.datetime)))
@@ -263,6 +276,7 @@ cmd
   .command('light [device]')
   .alias('ambient')
   .description('Gets the average ambient light level from a Point (defaults to the first Point found)')
+  .option('-d, --debug', 'Full response inspection')
   .action(function (device, opts) {
     checkAuth()
 
@@ -271,6 +285,8 @@ cmd
 
     req.get(`/devices/${point.id}/part_als`)
       .then(function (res) {
+        if (opts.debug) console.log(util.inspect(res, {showHidden: true, depth: null}))
+
         let newest = _.last(res.data.values)
         console.log('Avg light: ' + chalk.green(newest.value))
         console.log('Time: ' + chalk.green(formatDate(newest.datetime)))
@@ -287,6 +303,7 @@ cmd
   .command('lightir [device]')
   .alias('ambientir')
   .description('Gets the average ambient light IR level from a Point (defaults to the first Point found)')
+  .option('-d, --debug', 'Full response inspection')
   .action(function (device, opts) {
     checkAuth()
 
@@ -295,6 +312,8 @@ cmd
 
     req.get(`/devices/${point.id}/part_als_ir`)
       .then(function (res) {
+        if (opts.debug) console.log(util.inspect(res, {showHidden: true, depth: null}))
+
         let newest = _.last(res.data.values)
         console.log('Avg light IR: ' + chalk.green(newest.value))
         console.log('Time: ' + chalk.green(formatDate(newest.datetime)))
@@ -310,6 +329,7 @@ cmd
 cmd
   .command('pressure [device]')
   .description('Gets the average barometric pressure from a Point (defaults to the first Point found)')
+  .option('-d, --debug', 'Full response inspection')
   .action(function (device, opts) {
     checkAuth()
 
@@ -318,6 +338,8 @@ cmd
 
     req.get(`/devices/${point.id}/pressure`)
       .then(function (res) {
+        if (opts.debug) console.log(util.inspect(res, {showHidden: true, depth: null}))
+
         let newest = _.last(res.data.values)
         console.log('Avg pressure: ' + chalk.green(newest.value))
         console.log('Time: ' + chalk.green(formatDate(newest.datetime)))
@@ -334,6 +356,7 @@ cmd
   .command('timeline')
   .description('Retrieve your homes timeline (defaults to 10 events)')
   .option('-l, --limit [number]', 'Specify how many events you would like to retrieve')
+  .option('-d, --debug', 'Full response inspection')
   .action(function (opts) {
     checkAuth()
 
@@ -348,7 +371,10 @@ cmd
 
     req.get('/events', config)
       .then(function (res) {
+        if (opts.debug) console.log(util.inspect(res, {showHidden: true, depth: null}))
+
         let timeline = res.data.events
+
         console.log(chalk.green('→ Present'))
         for (var event of timeline) {
           console.log(chalk.green('↓'))
@@ -357,9 +383,7 @@ cmd
           for (var param of text_params) {
             console.log('Device: ' + chalk.green(param.value))
           }
-
           console.log('Event:  ' + chalk.green(timelinePrettier(event.type)))
-
         }
         console.log(chalk.green('→ Past'))
       })
